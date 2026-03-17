@@ -1,0 +1,7 @@
+[extension]
+name = "terraform"
+description = "Run Terraform CLI commands against Nuon-managed sandbox and component workspaces"
+
+[extension.auth]
+requires_token = true
+requires_org = true

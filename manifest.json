@@ -1,0 +1,16 @@
+{
+  "name": "terraform",
+  "description": "Run Terraform CLI commands against Nuon-managed sandbox and component workspaces",
+  "repo": "nuonco/nuon-ext-terraform",
+  "version": "0.0.1",
+  "tag": "0.0.1",
+  "installed_at": "2026-03-17T00:00:00Z",
+  "updated_at": "2026-03-17T00:00:00Z",
+  "binary": "",
+  "type": "script",
+  "entrypoint": "nuon-ext-terraform",
+  "platform": "darwin/arm64",
+  "min_cli_version": "",
+  "requires_token": true,
+  "requires_org": true
+}
