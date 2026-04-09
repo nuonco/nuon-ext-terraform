@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/nuonco/nuon/bins/cli/extensions/nuon-ext-terraform/internal/config"
+	"github.com/nuonco/nuon-ext-terraform/internal/config"
 	"github.com/nuonco/nuon/sdks/nuon-go"
 )
 

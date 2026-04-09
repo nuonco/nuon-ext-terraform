@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/nuonco/nuon/bins/cli/extensions/nuon-ext-terraform/cmd"
+	"github.com/nuonco/nuon-ext-terraform/cmd"
 )
 
 func main() {

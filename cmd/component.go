@@ -7,8 +7,8 @@ import (
 
 	"github.com/spf13/cobra"
 
-	"github.com/nuonco/nuon/bins/cli/extensions/nuon-ext-terraform/internal/docker"
-	"github.com/nuonco/nuon/bins/cli/extensions/nuon-ext-terraform/internal/resolve"
+	"github.com/nuonco/nuon-ext-terraform/internal/docker"
+	"github.com/nuonco/nuon-ext-terraform/internal/resolve"
 )
 
 func newComponentCmd() *cobra.Command {

@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/nuonco/nuon/bins/cli/extensions/nuon-ext-terraform/internal/docker"
-	"github.com/nuonco/nuon/bins/cli/extensions/nuon-ext-terraform/internal/resolve"
+	"github.com/nuonco/nuon-ext-terraform/internal/docker"
+	"github.com/nuonco/nuon-ext-terraform/internal/resolve"
 )
 
 // resolveSource determines the Terraform source directory. For public repos it
