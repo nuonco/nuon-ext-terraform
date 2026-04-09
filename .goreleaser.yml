@@ -1,0 +1,29 @@
+version: 2
+
+builds:
+  - id: nuon-ext-terraform
+    main: .
+    binary: nuon-ext-terraform
+    ldflags:
+      - -s -w -X github.com/nuonco/nuon-ext-terraform/cmd.BuildVersion={{ .Version }}
+    env:
+      - CGO_ENABLED=0
+    goos:
+      - linux
+      - darwin
+    goarch:
+      - amd64
+      - arm64
+
+archives:
+  - id: nuon-ext-terraform
+    builds:
+      - nuon-ext-terraform
+    format: tar.gz
+    name_template: "nuon-ext-terraform-{{ .Os }}-{{ .Arch }}"
+
+checksum:
+  name_template: "checksums.txt"
+
+changelog:
+  sort: asc

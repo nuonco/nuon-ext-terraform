@@ -1,10 +1,13 @@
 package cmd
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/spf13/cobra"
 )
+
+var BuildVersion = "dev"
 
 func NewRootCmd() *cobra.Command {
 	cmd := &cobra.Command{
@@ -30,6 +33,13 @@ Use the "sandbox" or "component" subcommands to target a specific workspace.`,
 	cmd.AddCommand(
 		newSandboxCmd(),
 		newComponentCmd(),
+		&cobra.Command{
+			Use:   "version",
+			Short: "Print the extension version",
+			Run: func(cmd *cobra.Command, args []string) {
+				fmt.Println(BuildVersion)
+			},
+		},
 	)
 
 	return cmd
