@@ -23,13 +23,6 @@ CLI extension that drops you into an interactive Terraform shell connected to a 
 nuon ext install ./nuon-ext-terraform
 ```
 
-Or build from the monorepo:
-
-```bash
-make build
-nuon ext install .
-```
-
 ## Usage
 
 ### Sandbox
@@ -102,13 +95,3 @@ nuon -f ~/.nuon-staging terraform sandbox
 - The extension uses the nuon-go SDK to call `GetInstall`, `GetInstallComponents`, and `GetAppConfig` to resolve workspace IDs, Terraform versions, and VCS source info.
 - It generates a `nuon_backend.tf` file pointing to the ctl-api HTTP backend endpoints (`/v1/terraform-backend` for state, `/v1/terraform-workspaces/{id}/lock` and `/unlock` for locking), with the API token passed as a query parameter.
 - The Docker container uses the `hashicorp/terraform:<version>` image, mounts the source at `/workspace`, copies in the backend config, runs `terraform init -reconfigure`, and then drops into `/bin/sh`.
-
-## Development
-
-```bash
-# Build (requires NUON_REPO_ROOT pointing to the monorepo)
-make build
-
-# Run directly
-./nuon-ext-terraform sandbox --help
-```
