@@ -20,7 +20,7 @@ CLI extension that drops you into an interactive Terraform shell connected to a 
 ## Install
 
 ```bash
-nuon ext install ./nuon-ext-terraform
+nuon ext install terraform
 ```
 
 ## Usage

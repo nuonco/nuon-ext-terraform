@@ -49,13 +49,28 @@ func Run(cfg RunConfig) error {
 	}
 
 	if len(cfg.Command) > 0 && cfg.Command[0] == "shell" {
+		backendContent := generateBackendConfig(cfg.APIURL, cfg.WorkspaceID, cfg.OrgID, cfg.APIToken)
+
+		tmpDir, err := os.MkdirTemp("", "nuon-tf-backend-*")
+		if err != nil {
+			return fmt.Errorf("unable to create temp dir for backend config: %w", err)
+		}
+		defer os.RemoveAll(tmpDir)
+
+		backendFile := filepath.Join(tmpDir, "nuon_backend.tf")
+		if err := os.WriteFile(backendFile, []byte(backendContent), 0o644); err != nil {
+			return fmt.Errorf("unable to write backend config: %w", err)
+		}
+
 		args := []string{
 			"run", "--rm", "-it",
 			"--entrypoint", "/bin/sh",
 			"-v", sourceDir + ":/workspace",
+			"-v", tmpDir + ":/nuon-backend:ro",
 			"-w", "/workspace",
 			"-e", "TF_HTTP_AUTHORIZATION=Bearer " + cfg.APIToken,
 			image,
+			"-c", "cp /nuon-backend/nuon_backend.tf /workspace/nuon_backend.tf && exec /bin/sh",
 		}
 		return dockerExec(args)
 	}
@@ -79,7 +94,7 @@ func RunInit(cfg RunConfig) error {
 		return fmt.Errorf("unable to resolve source directory: %w", err)
 	}
 
-	backendContent := generateBackendConfig(cfg.APIURL, cfg.WorkspaceID, cfg.OrgID)
+	backendContent := generateBackendConfig(cfg.APIURL, cfg.WorkspaceID, cfg.OrgID, cfg.APIToken)
 
 	tmpDir, err := os.MkdirTemp("", "nuon-tf-backend-*")
 	if err != nil {
@@ -113,19 +128,19 @@ func dockerExec(args []string) error {
 	return cmd.Run()
 }
 
-func generateBackendConfig(apiURL, workspaceID, orgID string) string {
+func generateBackendConfig(apiURL, workspaceID, orgID, apiToken string) string {
 	return fmt.Sprintf(`terraform {
   backend "http" {
     lock_method    = "POST"
     unlock_method  = "POST"
-    address        = "%s/v1/terraform-backend?workspace_id=%s&org_id=%s"
-    lock_address   = "%s/v1/terraform-workspaces/%s/lock?org_id=%s"
-    unlock_address = "%s/v1/terraform-workspaces/%s/unlock?org_id=%s"
+    address        = "%s/v1/terraform-backend?workspace_id=%s&org_id=%s&token=%s"
+    lock_address   = "%s/v1/terraform-workspaces/%s/lock?org_id=%s&token=%s"
+    unlock_address = "%s/v1/terraform-workspaces/%s/unlock?org_id=%s&token=%s"
   }
 }
-`, apiURL, workspaceID, orgID,
-		apiURL, workspaceID, orgID,
-		apiURL, workspaceID, orgID)
+`, apiURL, workspaceID, orgID, apiToken,
+		apiURL, workspaceID, orgID, apiToken,
+		apiURL, workspaceID, orgID, apiToken)
 }
 
 // CloneResult holds the paths from a public repo clone.
@@ -137,7 +152,7 @@ type CloneResult struct {
 	CloneRoot string
 }
 
-func ClonePublicRepo(repo, branch, directory string) (*CloneResult, error) {
+func ClonePublicRepo(repo, ref, directory string) (*CloneResult, error) {
 	repoURL := repo
 	if !strings.Contains(repoURL, "://") {
 		repoURL = "https://github.com/" + repo + ".git"
@@ -148,13 +163,37 @@ func ClonePublicRepo(repo, branch, directory string) (*CloneResult, error) {
 		return nil, fmt.Errorf("unable to create temp dir: %w", err)
 	}
 
-	fmt.Fprintf(os.Stderr, "Cloning %s (branch: %s)...\n", repo, branch)
-	cmd := exec.Command("git", "clone", "--depth", "1", "--branch", branch, repoURL, tmpDir)
-	cmd.Stdout = os.Stderr
-	cmd.Stderr = os.Stderr
-	if err := cmd.Run(); err != nil {
+	fmt.Fprintf(os.Stderr, "Cloning %s (branch: %s)...\n", repo, ref)
+
+	// Try shallow clone with --branch first (works for branches and tags).
+	// If that fails (e.g. ref is a commit SHA), fall back to a full clone + checkout.
+	cloneCmd := exec.Command("git", "clone", "--depth", "1", "--branch", ref, repoURL, tmpDir)
+	cloneCmd.Stdout = os.Stderr
+	cloneCmd.Stderr = os.Stderr
+	if err := cloneCmd.Run(); err != nil {
 		os.RemoveAll(tmpDir)
-		return nil, fmt.Errorf("unable to clone %s: %w", repo, err)
+
+		tmpDir, err = os.MkdirTemp("", "nuon-tf-source-*")
+		if err != nil {
+			return nil, fmt.Errorf("unable to create temp dir: %w", err)
+		}
+
+		fullClone := exec.Command("git", "clone", repoURL, tmpDir)
+		fullClone.Stdout = os.Stderr
+		fullClone.Stderr = os.Stderr
+		if err := fullClone.Run(); err != nil {
+			os.RemoveAll(tmpDir)
+			return nil, fmt.Errorf("unable to clone %s: %w", repo, err)
+		}
+
+		checkout := exec.Command("git", "checkout", ref)
+		checkout.Dir = tmpDir
+		checkout.Stdout = os.Stderr
+		checkout.Stderr = os.Stderr
+		if err := checkout.Run(); err != nil {
+			os.RemoveAll(tmpDir)
+			return nil, fmt.Errorf("unable to checkout %s: %w", ref, err)
+		}
 	}
 
 	sourceDir := tmpDir
