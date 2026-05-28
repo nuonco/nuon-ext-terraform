@@ -9,6 +9,28 @@ import (
 	"github.com/nuonco/nuon/sdks/nuon-go/models"
 )
 
+// fetchAllInstallComponents pages through GetInstallComponents until exhausted.
+// The backend defaults to limit=10, so callers that pass nil only see the first
+// page, which silently hides components past the cutoff.
+func fetchAllInstallComponents(ctx context.Context, api nuon.Client, installID string) ([]*models.AppInstallComponent, error) {
+	const pageSize = 100
+	var all []*models.AppInstallComponent
+	offset := 0
+	for {
+		query := &models.GetPaginatedQuery{Offset: offset, Limit: pageSize}
+		page, hasMore, err := api.GetInstallComponents(ctx, installID, query)
+		if err != nil {
+			return nil, err
+		}
+		all = append(all, page...)
+		if !hasMore {
+			break
+		}
+		offset += pageSize
+	}
+	return all, nil
+}
+
 type VCSSource struct {
 	Repo      string
 	Directory string
@@ -68,7 +90,7 @@ func ComponentWorkspace(ctx context.Context, api nuon.Client, installID, compone
 		return nil, fmt.Errorf("unable to get install: %w", err)
 	}
 
-	components, _, err := api.GetInstallComponents(ctx, installID, nil)
+	components, err := fetchAllInstallComponents(ctx, api, installID)
 	if err != nil {
 		return nil, fmt.Errorf("unable to get install components: %w", err)
 	}
@@ -136,7 +158,7 @@ func ComponentWorkspace(ctx context.Context, api nuon.Client, installID, compone
 }
 
 func ListTerraformComponents(ctx context.Context, api nuon.Client, installID string) ([]string, error) {
-	components, _, err := api.GetInstallComponents(ctx, installID, nil)
+	components, err := fetchAllInstallComponents(ctx, api, installID)
 	if err != nil {
 		return nil, fmt.Errorf("unable to get install components: %w", err)
 	}
