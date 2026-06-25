@@ -90,7 +90,7 @@ func ComponentWorkspace(ctx context.Context, api nuon.Client, installID, compone
 		return nil, fmt.Errorf("unable to get install: %w", err)
 	}
 
-	components, err := fetchAllInstallComponents(ctx, api, installID)
+	components, _, err := api.GetInstallComponents(ctx, installID, &models.GetPaginatedQuery{Limit: 100})
 	if err != nil {
 		return nil, fmt.Errorf("unable to get install components: %w", err)
 	}
