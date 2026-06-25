@@ -3,7 +3,7 @@ module github.com/nuonco/nuon-ext-terraform
 go 1.25.5
 
 require (
-	github.com/nuonco/nuon/sdks/nuon-go v0.92.1
+	github.com/nuonco/nuon/sdks/nuon-go v0.92.2-0.20260625045807-9f8233acd96d
 	github.com/spf13/cobra v1.9.1
 )
 

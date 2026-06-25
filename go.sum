@@ -90,8 +90,8 @@ github.com/mitchellh/mapstructure v1.5.0 h1:jeMsZIYE/09sWLaz43PL7Gy6RuMjD2eJVyua
 github.com/mitchellh/mapstructure v1.5.0/go.mod h1:bFUtVrKA4DC2yAKiSyO/QUcy7e+RRV2QTWOzhPopBRo=
 github.com/mitchellh/reflectwalk v1.0.2 h1:G2LzWKi524PWgd3mLHV8Y5k7s6XUvT0Gef6zxSIeXaQ=
 github.com/mitchellh/reflectwalk v1.0.2/go.mod h1:mSTlrgnPZtwu0c4WaC2kGObEpuNDbx0jmZXqmk4esnw=
-github.com/nuonco/nuon/sdks/nuon-go v0.92.1 h1:8XU9ih+RkOgorOaFKyWEAEE6gj+VH3xJsiw2vOYRNvI=
-github.com/nuonco/nuon/sdks/nuon-go v0.92.1/go.mod h1:lc/cv6t3btGvZLrWmrrbbIey6irK4tUa1GizYcMuN7Q=
+github.com/nuonco/nuon/sdks/nuon-go v0.92.2-0.20260625045807-9f8233acd96d h1:wKBiQfcfrPBGV4T2iCvZKipzAYSaeHsYgXT29V8Jo6U=
+github.com/nuonco/nuon/sdks/nuon-go v0.92.2-0.20260625045807-9f8233acd96d/go.mod h1:lc/cv6t3btGvZLrWmrrbbIey6irK4tUa1GizYcMuN7Q=
 github.com/oklog/ulid v1.3.1 h1:EGfNDEx6MqHz8B3uNV6QAib1UR2Lm97sHi3ocA6ESJ4=
 github.com/oklog/ulid v1.3.1/go.mod h1:CirwcVhetQ6Lv90oh/F+FBtV6XMibvdAFo93nm5qn4U=
 github.com/opentracing/opentracing-go v1.2.0 h1:uEJPy/1a5RIPAJ0Ov+OIO8OxWu77jEv+1B0VhjKrZUs=
