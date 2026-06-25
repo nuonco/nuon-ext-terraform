@@ -17,9 +17,10 @@ builds:
 
 archives:
   - id: nuon-ext-terraform
-    builds:
+    ids:
       - nuon-ext-terraform
-    format: tar.gz
+    formats:
+      - tar.gz
     name_template: "nuon-ext-terraform-{{ .Os }}-{{ .Arch }}"
 
 checksum:
