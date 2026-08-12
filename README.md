@@ -84,10 +84,10 @@ nuon terraform component --name my-db --source-dir ~/code/my-infra/modules/datab
 
 ### Custom config file
 
-The extension respects the `nuon -f` flag for using a config file other than `~/.nuon`:
+The extension respects the `nuon --config` (`-C`) flag for using a config file other than `~/.nuon`:
 
 ```bash
-nuon -f ~/.nuon-staging terraform sandbox
+nuon -C ~/.nuon-staging terraform sandbox
 ```
 
 ## How it works
